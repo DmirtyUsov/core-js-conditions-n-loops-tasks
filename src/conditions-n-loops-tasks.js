@@ -513,8 +513,65 @@ function shuffleChar(str, iterations) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  const TEN = 10;
+  const reversedDigits = [];
+  let numberRightPart = 0;
+  let place = 0;
+
+  while (number !== numberRightPart) {
+    const placeIdentifier = TEN ** (place + 1);
+    numberRightPart = number % placeIdentifier;
+    const digit = Math.floor(numberRightPart / TEN ** place);
+    reversedDigits[place] = digit;
+    place += 1;
+  }
+
+  place = 0;
+  let leftDigit;
+  let rightDigit;
+  const digitsToSort = [];
+
+  while (place < reversedDigits.length - 1) {
+    rightDigit = reversedDigits[place];
+    digitsToSort[place] = rightDigit;
+    place += 1;
+    leftDigit = reversedDigits[place];
+    if (rightDigit > leftDigit) {
+      digitsToSort[place] = leftDigit;
+      break;
+    }
+  }
+
+  sortByAsc(digitsToSort);
+
+  for (let idx = 0; idx < digitsToSort.length; idx += 1) {
+    if (leftDigit === digitsToSort[idx]) {
+      const nextDigit = digitsToSort[idx + 1];
+      if (leftDigit !== nextDigit) {
+        rightDigit = nextDigit;
+        leftDigit = idx + 1;
+        break;
+      }
+    }
+  }
+
+  let newNumberStr = '';
+  for (let idx = reversedDigits.length - 1; idx > place; idx += -1) {
+    newNumberStr += `${reversedDigits[idx]}`;
+  }
+
+  newNumberStr += `${rightDigit}`;
+
+  for (let idx = 0; idx < digitsToSort.length; idx += 1) {
+    if (idx !== leftDigit) {
+      newNumberStr += `${digitsToSort[idx]}`;
+    }
+  }
+
+  const newNumber = parseInt(newNumberStr, 10);
+
+  return newNumber;
 }
 
 module.exports = {
